@@ -29,8 +29,19 @@ fn parse_super_key(i: &str) -> IResult<&str, KeyModifier> {
     map(parser, |t: &str| KeyModifier::from_str(t).unwrap())(i)
 }
 
+fn parse_shift_key(i: &str) -> IResult<&str, KeyModifier> {
+    let parser = tag_no_case(KeyModifier::SHIFT.into());
+    // Safe unwrap as nom takes care of actually having the right tag here.
+    map(parser, |t: &str| KeyModifier::from_str(t).unwrap())(i)
+}
+
 fn parse_modifier_key(i: &str) -> IResult<&str, KeyModifier> {
-    alt((parse_alt_key, parse_ctrl_key, parse_super_key))(i)
+    alt((
+        parse_alt_key,
+        parse_ctrl_key,
+        parse_super_key,
+        parse_shift_key,
+    ))(i)
 }
 
 fn parse_key(i: &str) -> IResult<&str, Key> {
